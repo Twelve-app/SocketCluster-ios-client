@@ -256,6 +256,11 @@
 
 }
 
+- (void)auth:( NSString* _Nonnull)token{
+    JWTToken=token;
+    isAuthenticated=YES;
+}
+
 -(void)setRestoreWaitForAuth:(BOOL)wait{
     
     waitResendUntilAuth = wait;
@@ -625,12 +630,7 @@
                 [self restoreChannels];
                 [self resendStoredMessages];
             }
-                 reconnecting = NO;
-            
-            
-            if ([self.delegate respondsToSelector:@selector(socketClusterAuthenticateEvent:)]){
-                [self.delegate socketClusterAuthenticateEvent:token];
-            }
+            reconnecting = NO;
             
             
         }
