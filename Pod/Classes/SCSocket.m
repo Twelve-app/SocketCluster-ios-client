@@ -492,12 +492,7 @@
                 
                 
                 if ([eventName isEqualToString:@"#removeAuthToken"]) {
-                    isStandartEvent = YES;
-                    
-                    [self processRemoveAuthToken];
-                    
-                    
-                    
+                    return;
                 }
                 
                 if ([eventName isEqualToString:@"#disconnect"]) {
