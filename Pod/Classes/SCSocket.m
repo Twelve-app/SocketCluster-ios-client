@@ -259,6 +259,8 @@
 - (void)auth:( NSString* _Nonnull)token{
     JWTToken=token;
     isAuthenticated=YES;
+    
+    [self emitEvent:@"#authenticate" withData:JWTToken];
 }
 
 -(void)setRestoreWaitForAuth:(BOOL)wait{
