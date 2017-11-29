@@ -34,6 +34,7 @@ typedef enum _SOCKET_STATE {
 
 @property (assign, nonatomic,nullable) id <SocketClusterDelegate>delegate;
 @property (nonatomic, readonly,nonnull) NSString* socketId;
+@property (assign, nonatomic, nullable) NSString* connectionId;
 
 
 
@@ -62,7 +63,7 @@ typedef enum _SOCKET_STATE {
 
 //service methods
 -(void)loginWithData:(nullable NSDictionary*)data withSuccess:(nullable void (^)(_Nullable id response))success withFail:(nullable void (^)(_Nullable id response))fail;
--(void)subscribeToChannel:(SCChannel* _Nonnull)channel;
+-(void)subscribeToChannel:(SCChannel* _Nonnull)channel withConnectionId:(nullable NSString*)connectionId;
 -(void)unSubscribeFromChannel:(SCChannel* _Nonnull)channel;
 
 

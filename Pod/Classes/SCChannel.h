@@ -45,7 +45,7 @@ typedef enum _CHANNEL_STATE {
 
 
 
--(void)subscribeWithSuccess:(nullable void (^)(_Nullable id response))success withFail:(nullable void (^)( NSError*  _Nullable error,_Nullable id response))fail;
+-(void)subscribeWithSuccess:(nullable void (^)(_Nullable id response))success withFail:(nullable void (^)( NSError*  _Nullable error,_Nullable id response))fail withConnectionId:(nullable NSString*)connectionId;
 
 -(void)unsubscribeWithSuccess:(nullable void (^)(void))success;
 -(BOOL) isEqual:(nonnull SCChannel*)object;
