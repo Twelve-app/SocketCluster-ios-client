@@ -213,7 +213,7 @@
 
 -(void)sendPong{
     
-    [wS send:@"2"];
+    [wS send:@"#2"];
     
 }
 
