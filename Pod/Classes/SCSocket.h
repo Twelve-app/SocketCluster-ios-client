@@ -53,6 +53,7 @@ typedef enum _SOCKET_STATE {
 - (void)pause;
 - (void)disconnect;
 - (void)auth:( NSString* _Nonnull)token;
+- (void)unauth;
 
 // settings
 -(void)setRestoreWaitForAuth:(BOOL)wait;

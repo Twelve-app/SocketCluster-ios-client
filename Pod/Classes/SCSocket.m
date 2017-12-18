@@ -263,6 +263,13 @@
     [self emitEvent:@"#authenticate" withData:JWTToken];
 }
 
+- (void)unauth{
+    JWTToken=nil;
+    isAuthenticated=NO;
+    
+    [self emitEvent:@"#authenticate" withData:nil];
+}
+
 -(void)setRestoreWaitForAuth:(BOOL)wait{
     
     waitResendUntilAuth = wait;
