@@ -641,17 +641,17 @@
 
 #pragma mark work with SCChannel
 
--(void)subscribeToChannel:(SCChannel*)channel withBuddy:(nullable BOOL)buddy{
+-(void)subscribeToChannel:(SCChannel*)channel withBuddy:(BOOL)buddy{
     
     if ([channelsArray containsObject:channel]) {
         [channelsArray removeObject:channel];
     }
     [channelsArray addObject:channel];
     
-    if (buddy == NULL) {
+    if (buddy == NO) {
         channel.cid = [[[SCMessage alloc] initWithEventName:@"#subscribe" andData:@{@"channel":[channel getName]}] send];
     } else {
-        channel.cid = [[[SCMessage alloc] initWithEventName:@"#subscribe" andData:@{@"channel":[channel getName], @"data":@{@"buddy":buddy}}] send];
+        channel.cid = [[[SCMessage alloc] initWithEventName:@"#subscribe" andData:@{@"channel":[channel getName], @"data":@{@"buddy":@"1"}}] send];
     }
     
     channel.state=CHANNEL_STATE_PENDING;
@@ -713,10 +713,10 @@
         for (SCChannel* channel in channelsArray) {
             
             if (channel.state == CHANNEL_STATE_SUBSCRIBED) {
-                if (_buddy == NULL) {
+                if (_buddy == NO) {
                     [self emitEvent:@"#subscribe" withData:@{@"channel":[channel getName]}];
                 } else {
-                    [self emitEvent:@"#subscribe" withData:@{@"channel":[channel getName], @"data":@{@"buddy":_buddy}}];
+                    [self emitEvent:@"#subscribe" withData:@{@"channel":[channel getName], @"data":@{@"buddy":@"1")}}];
                 }
             }
             
