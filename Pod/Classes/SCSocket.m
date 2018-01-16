@@ -641,26 +641,20 @@
 
 #pragma mark work with SCChannel
 
--(void)subscribeToChannel:(SCChannel*)channel{
+-(void)subscribeToChannel:(SCChannel*)channel withBuddy:(nullable BOOL)buddy{
     
     if ([channelsArray containsObject:channel]) {
-       
-    
         [channelsArray removeObject:channel];
-    
-    
     }
-       
-        [channelsArray addObject:channel];
-        
+    [channelsArray addObject:channel];
+    
+    if (buddy == NULL) {
         channel.cid = [[[SCMessage alloc] initWithEventName:@"#subscribe" andData:@{@"channel":[channel getName]}] send];
+    } else {
+        channel.cid = [[[SCMessage alloc] initWithEventName:@"#subscribe" andData:@{@"channel":[channel getName], @"data":@{@"buddy":buddy}}] send];
+    }
     
-        channel.state=CHANNEL_STATE_PENDING;
-        
-    
-    
-    
-    
+    channel.state=CHANNEL_STATE_PENDING;
 }
 
 -(void)unSubscribeFromChannel:(SCChannel* _Nonnull)channel{
@@ -719,8 +713,11 @@
         for (SCChannel* channel in channelsArray) {
             
             if (channel.state == CHANNEL_STATE_SUBSCRIBED) {
-                        
-                        [self emitEvent:@"#subscribe" withData:@{@"channel":[channel getName]}];
+                if (_buddy == NULL) {
+                    [self emitEvent:@"#subscribe" withData:@{@"channel":[channel getName]}];
+                } else {
+                    [self emitEvent:@"#subscribe" withData:@{@"channel":[channel getName], @"data":@{@"buddy":_buddy}}];
+                }
             }
             
         }

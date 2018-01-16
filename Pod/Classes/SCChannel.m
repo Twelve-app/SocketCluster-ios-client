@@ -41,16 +41,14 @@
     
 }
 
--(void)subscribeWithSuccess:(nullable void (^)(id response))success withFail:(nullable void (^)(NSError* error,id response))fail{
+-(void)subscribeWithSuccess:(nullable void (^)(id response))success withFail:(nullable void (^)(NSError* error,id response))fail withBuddy:(nullable BOOL)buddy{
     
 
     self.SubscribeFailBlock=fail;
     self.SubsscribeSuccessBlock=success;
     
-    [[SCSocket client] subscribeToChannel:self];
-    
-    
-    
+    [SCSocket client].buddy = buddy;
+    [[SCSocket client] subscribeToChannel:self withBuddy:buddy];
 }
 
 -(BOOL) isEqual:(SCChannel*)object{
