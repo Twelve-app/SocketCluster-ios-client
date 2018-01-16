@@ -716,7 +716,7 @@
                 if (_buddy == NO) {
                     [self emitEvent:@"#subscribe" withData:@{@"channel":[channel getName]}];
                 } else {
-                    [self emitEvent:@"#subscribe" withData:@{@"channel":[channel getName], @"data":@{@"buddy":@"1")}}];
+                    [self emitEvent:@"#subscribe" withData:@{@"channel":[channel getName], @"data":@{@"buddy":@"1"}}];
                 }
             }
             
