@@ -94,7 +94,7 @@
         secure = isSecureConnection;
         channelsArray=[[NSMutableArray alloc]init];
         messagesArray=[[NSMutableArray alloc]init];
-
+        _datas = [NSMutableDictionary dictionary];
     
 }
 
@@ -645,22 +645,19 @@
 
 #pragma mark work with SCChannel
 
--(void)subscribeToChannel:(SCChannel*)channel withConnectionId:(nullable NSString*)connectionId{
-    
+-(void)subscribeToChannel:(SCChannel*)channel{
     if ([channelsArray containsObject:channel]) {
-        
-        
         [channelsArray removeObject:channel];
-        
-        
     }
-    
     [channelsArray addObject:channel];
     
-    if (connectionId == NULL) {
+    NSString* name = [channel getName];
+    NSDictionary* data = [_datas objectForKey:name];
+    
+    if (data == nil) {
         channel.cid = [[[SCMessage alloc] initWithEventName:@"#subscribe" andData:@{@"channel":[channel getName]}] send];
     } else {
-        channel.cid = [[[SCMessage alloc] initWithEventName:@"#subscribe" andData:@{@"channel":[channel getName], @"data":@{@"connectionId":connectionId}}] send];
+        channel.cid = [[[SCMessage alloc] initWithEventName:@"#subscribe" andData:@{@"channel":[channel getName], @"data":data}] send];
     }
     
     channel.state=CHANNEL_STATE_PENDING;
@@ -694,8 +691,7 @@
 }
 
 -(SCChannel*)findChanneByRid:(NSInteger)rid{
-    
-    for (SCChannel *channel in channelsArray) {
+for (SCChannel *channel in channelsArray) {
         if (channel.cid == rid) {
             return channel;
         }
@@ -718,19 +714,18 @@
 
 -(void)restoreChannels{
     if (restoreChannels) {
-        
         for (SCChannel* channel in channelsArray) {
-            
             if (channel.state == CHANNEL_STATE_SUBSCRIBED) {
-                if (_connectionId == NULL) {
+                NSString* name = [channel getName];
+                NSDictionary* data = [_datas objectForKey:name];
+                
+                if (data == nil) {
                     [self emitEvent:@"#subscribe" withData:@{@"channel":[channel getName]}];
                 } else {
-                    [self emitEvent:@"#subscribe" withData:@{@"channel":[channel getName], @"data":@{@"connectionId":_connectionId}}];
+                    [self emitEvent:@"#subscribe" withData:@{@"channel":[channel getName], @"data":data}];
                 }
             }
-            
         }
-        
     }
 }
 

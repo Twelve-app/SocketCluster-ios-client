@@ -41,14 +41,16 @@
     
 }
 
--(void)subscribeWithSuccess:(nullable void (^)(id response))success withFail:(nullable void (^)(NSError* error,id response))fail withConnectionId:(nullable NSString*)connectionId{
+-(void)subscribeWithSuccess:(nullable void (^)(id response))success withFail:(nullable void (^)(NSError* error,id response))fail withDatas:(NSDictionary*)datas{
     
     
     self.SubscribeFailBlock=fail;
     self.SubsscribeSuccessBlock=success;
     
-    [SCSocket client].connectionId = connectionId;
-    [[SCSocket client] subscribeToChannel:self withConnectionId:connectionId];
+    NSString* name = [self getName];
+    [[SCSocket client].datas setValue:datas forKey:name];
+    
+    [[SCSocket client] subscribeToChannel:self];
 }
 
 -(BOOL) isEqual:(SCChannel*)object{
