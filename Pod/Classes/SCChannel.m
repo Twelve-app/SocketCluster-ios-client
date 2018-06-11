@@ -46,7 +46,7 @@
 
     self.SubscribeFailBlock=fail;
     self.SubsscribeSuccessBlock=success;
-    self.WillSubscribeBlock=willSubscribe
+    self.WillSubscribeBlock=willSubscribe;
     
     if ([channelName containsString:@"public"]) {
         [SCSocket client].buddy = buddy;
