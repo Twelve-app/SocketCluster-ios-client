@@ -10,6 +10,7 @@
 
 typedef void(^SCChannelSubscribeHandler)(_Nullable id response);
 typedef void(^SCChannelUnsubscribeHandler)();
+typedef void(^SCChannelWillSubscribeHandler)();
 
 typedef void(^SCChannelSubscribeFailHandler)(NSError* _Nullable error,_Nullable id response);
 
@@ -36,6 +37,7 @@ typedef enum _CHANNEL_STATE {
 @property (nonatomic, copy) _Nullable SCChannelUnsubscribeHandler UnsubsscribeSuccessBlock;
 @property (nonatomic, copy) _Nullable SCChannelSubscribeHandler SubsscribeSuccessBlock;
 @property (nonatomic, copy)_Nullable SCChannelSubscribeFailHandler SubscribeFailBlock;
+@property (nonatomic, copy)_Nullable SCChannelWillSubscribeHandler WillSubscribeBlock;
 @property NSInteger cid;
 @property CHANNEL_STATE state;
 
@@ -45,7 +47,7 @@ typedef enum _CHANNEL_STATE {
 
 
 
--(void)subscribeWithSuccess:(nullable void (^)(_Nullable id response))success withFail:(nullable void (^)( NSError*  _Nullable error,_Nullable id response))fail withBuddy:(BOOL)buddy;
+-(void)subscribeWithSuccess:(nullable void (^)(_Nullable id response))success withFail:(nullable void (^)( NSError*  _Nullable error,_Nullable id response))fail withWillSubscribe:(nullable void (^)(void))willSubscribe withBuddy:(BOOL)buddy;
 
 -(void)unsubscribeWithSuccess:(nullable void (^)(void))success;
 -(BOOL) isEqual:(nonnull SCChannel*)object;

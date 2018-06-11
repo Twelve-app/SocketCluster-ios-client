@@ -642,7 +642,9 @@
 #pragma mark work with SCChannel
 
 -(void)subscribeToChannel:(SCChannel*)channel withBuddy:(BOOL)buddy{
-    
+    if (channel.WillSubscribeBlock) {
+        channel.WillSubscribeBlock();
+    }
     if ([channelsArray containsObject:channel]) {
         [channelsArray removeObject:channel];
     }
@@ -713,6 +715,9 @@
         for (SCChannel* channel in channelsArray) {
             
             if (channel.state == CHANNEL_STATE_SUBSCRIBED) {
+                if (channel.WillSubscribeBlock) {
+                    channel.WillSubscribeBlock();
+                }
                 if (_buddy == NO) {
                     [self emitEvent:@"#subscribe" withData:@{@"channel":[channel getName]}];
                 } else {

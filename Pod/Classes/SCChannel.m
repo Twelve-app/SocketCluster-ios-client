@@ -41,11 +41,12 @@
     
 }
 
--(void)subscribeWithSuccess:(nullable void (^)(id response))success withFail:(nullable void (^)(NSError* error,id response))fail withBuddy:(BOOL)buddy{
+-(void)subscribeWithSuccess:(nullable void (^)(id response))success withFail:(nullable void (^)(NSError* error,id response))fail withWillSubscribe:(nullable void (^)(void))willSubscribe withBuddy:(BOOL)buddy{
     
 
     self.SubscribeFailBlock=fail;
     self.SubsscribeSuccessBlock=success;
+    self.WillSubscribeBlock=willSubscribe
     
     if ([channelName containsString:@"public"]) {
         [SCSocket client].buddy = buddy;
