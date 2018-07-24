@@ -660,30 +660,28 @@
 }
 
 -(void)unSubscribeFromChannel:(SCChannel* _Nonnull)channel{
-    
-    
     if ([channelsArray containsObject:channel]) {
-       
-        [[[SCMessage alloc] initWithEventName:@"#unsubscribe" andData:[channel getName]] sendWithSuccess:^(SCMessage * _Nonnull message, id  _Nullable response) {
-            
-            [channelsArray removeObject:channel];
-            
-            if (channel.UnsubsscribeSuccessBlock) {
+        if ([self getState] == SR_OPEN) {
+            [[[SCMessage alloc] initWithEventName:@"#unsubscribe" andData:[channel getName]] sendWithSuccess:^(SCMessage * _Nonnull message, id  _Nullable response) {
+                [channelsArray removeObject:channel];
+                if (channel.UnsubsscribeSuccessBlock) {
                     channel.UnsubsscribeSuccessBlock();
+                }
+            } withFail:^(SCMessage * _Nonnull message, id  _Nullable response) {
+                [channelsArray removeObject:channel];
+                
+                if (channel.UnsubsscribeSuccessBlock) {
+                    channel.UnsubsscribeSuccessBlock();
+                }
+            }];
+        } else {
+            [channelsArray removeObject:channel];
+            if (channel.UnsubsscribeSuccessBlock) {
+                channel.UnsubsscribeSuccessBlock();
             }
-         
-            
-        } withFail:^(SCMessage * _Nonnull message, id  _Nullable response) {
-            
-        }];
-        
+        }
         channel.state=CHANNEL_STATE_PENDING;
-        
     }
-
-    
-    
-    
 }
 
 -(SCChannel*)findChanneByRid:(NSInteger)rid{
