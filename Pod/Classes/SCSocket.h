@@ -55,10 +55,9 @@ typedef enum _SOCKET_STATE {
 - (void)disconnect;
 
 // settings
+-(void)updateInLiveState:(BOOL)isInLive;
 -(void)setRestoreWaitForAuth:(BOOL)wait;
 -(void)setRestoreChannels:(BOOL)restore;
--(void)setMinSCReconnectTime:(NSInteger)minReconnectTime;
--(void)setMaxSCReconnectTime:(NSInteger)maxReconnectTime;
 
 
 //service methods

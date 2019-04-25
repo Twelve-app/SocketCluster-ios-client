@@ -16,9 +16,6 @@
     
     NSString*SCHost;
     NSInteger SCPort;
-
-    NSInteger SCReconnectTime;
-    NSInteger MaxSCReconnectTime;
     
     NSString*JWTToken;
     NSInteger cid;
@@ -36,6 +33,11 @@
     BOOL isPaused;
     
     SRWebSocket *wS;
+    
+    BOOL isDisconnected;
+    BOOL isInLive;
+    
+    NSInteger retryCount;
 }
 
 @end
@@ -88,8 +90,7 @@
      
         SCHost = host;
         SCPort = port;
-        SCReconnectTime=5;
-        MaxSCReconnectTime=10;
+        isDisconnected = NO;
     
         secure = isSecureConnection;
         channelsArray=[[NSMutableArray alloc]init];
@@ -111,45 +112,48 @@
 }
 
 - (void)webSocketDidOpen:(SRWebSocket *)webSocket{
-    
+    retryCount = 0;
     [self WSConnectedHandler];
-    
 }
 
-
 - (void)webSocket:(SRWebSocket *)webSocket didFailWithError:(NSError *)error{
-    
     if ([self.delegate respondsToSelector:@selector(socketClusterSocketFailedToConnect)]){
         [self.delegate socketClusterSocketFailedToConnect];
     }
     
-    if (SCReconnectTime>0) {
-       
-        NSInteger randReconnectTime = arc4random() % (MaxSCReconnectTime - SCReconnectTime) + SCReconnectTime;
-
-        reconnecting =YES;
+    if (!isDisconnected) {
+        NSTimeInterval random = ((rand() % 400) - 200) / 1000.0; // Random between -0.2 and 0.2
+        NSTimeInterval reconnectTime = 0.3 + random;
         
-        [self performSelector:@selector(connect) withObject:nil afterDelay:randReconnectTime];
+        if (!isInLive) {
+            reconnectTime = reconnectTime + retryCount;
+            retryCount = retryCount + 1;
+        }
+
+        reconnecting = YES;
+        
+        [self performSelector:@selector(connect) withObject:nil afterDelay:reconnectTime];
     }
-    
 }
 
 - (void)webSocket:(SRWebSocket *)webSocket didCloseWithCode:(NSInteger)code reason:(NSString *)reason wasClean:(BOOL)wasClean{
-   
     if ([self.delegate respondsToSelector:@selector(socketClusterSocketFailedToConnect)]){
         [self.delegate socketClusterSocketFailedToConnect];
     }
     
-    if (SCReconnectTime>0 && !isPaused) {
+    if (!isDisconnected && !isPaused) {
+        NSTimeInterval random = ((rand() % 400) - 200) / 1000.0; // Random between -0.2 and 0.2
+        NSTimeInterval reconnectTime = 0.3 + random;
         
-        reconnecting =YES;
+        if (!isInLive) {
+            reconnectTime = reconnectTime + retryCount;
+            retryCount = retryCount + 1;
+        }
         
-        NSInteger randReconnectTime = arc4random() % (MaxSCReconnectTime - SCReconnectTime) + SCReconnectTime;
+        reconnecting = YES;
         
-        [self performSelector:@selector(connect) withObject:nil afterDelay:randReconnectTime];
+        [self performSelector:@selector(connect) withObject:nil afterDelay:reconnectTime];
     }
-    
-    
 }
 
 
@@ -162,7 +166,6 @@
 
 
 #pragma mark - SCSocket methods
-
 
 
 
@@ -243,17 +246,22 @@
 
 - (void)disconnect{
     
+    retryCount = 0;
     [channelsArray removeAllObjects];
     [messagesArray removeAllObjects];
     
     JWTToken=nil;
     isAuthenticated=NO;
     
-    SCReconnectTime=-1;
+    isDisconnected = YES;
     [wS close];
     
     
 
+}
+
+-(void)updateInLiveState:(BOOL)isInLive {
+    self->isInLive = isInLive;
 }
 
 -(void)setRestoreWaitForAuth:(BOOL)wait{
@@ -782,15 +790,6 @@
         }
     }
     
-}
-
-
--(void)setMinSCReconnectTime:(NSInteger)reconnectTime{
-    SCReconnectTime=reconnectTime;
-}
-
--(void)setMaxSCReconnectTime:(NSInteger)reconnectTime{
-    MaxSCReconnectTime=reconnectTime;
 }
 
 -(NSArray*)getSubscribedChannels{
