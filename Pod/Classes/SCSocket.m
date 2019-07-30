@@ -498,10 +498,11 @@
                     channel.WillSubscribeBlock();
                 }
                 if (_buddy == NO) {
-                    [self emitEvent:@"#subscribe" withData:@{@"channel":[channel getName]}];
+                    channel.cid = [self emitEvent:@"#subscribe" withData:@{@"channel":[channel getName]}];
                 } else {
-                    [self emitEvent:@"#subscribe" withData:@{@"channel":[channel getName], @"data":@{@"buddy":@"1"}}];
+                    channel.cid = [self emitEvent:@"#subscribe" withData:@{@"channel":[channel getName], @"data":@{@"buddy":@"1"}}];
                 }
+                channel.state=CHANNEL_STATE_PENDING;
             }
             
         }
